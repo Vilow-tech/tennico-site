@@ -55,6 +55,65 @@
   }, { passive: false });
   addEventListener('scroll', () => { if (!raf) target = pos = scrollY; }, { passive: true });
 
+  /* ================= language: EN (source) / LT (assets/i18n-lt.js) ================= */
+  const LT = window.TENNICO_LT || { TEXT: {}, HTML: {} };
+  const squash = s => s.replace(/\s+/g, ' ').trim();
+  let lang = 'en';
+  try { lang = localStorage.getItem('tennico-lang') === 'lt' ? 'lt' : 'en'; } catch (e) {}
+  let undo = [];                                   // how to put the English back
+  const t = s => (lang === 'lt' && LT.TEXT[s]) || s;
+
+  const toLT = () => {
+    // 1) headings with coloured words: swap the whole element so word order stays right
+    $$('h1, h2, h3, h4, h5, h6, p').forEach(el => {
+      if (el.closest('[data-tr]')) return;
+      const lt = LT.HTML[squash(el.innerHTML)];
+      if (!lt) return;
+      const en = el.innerHTML;
+      el.innerHTML = lt; el.setAttribute('data-tr', '');
+      undo.push(() => { el.innerHTML = en; el.removeAttribute('data-tr'); });
+    });
+    // 2) plain text nodes
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+    const nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(n => {
+      const p = n.parentElement;
+      if (!p || p.closest('[data-tr], script, style, svg')) return;
+      const key = squash(n.nodeValue);
+      const lt = key && LT.TEXT[key];
+      if (!lt) return;
+      const en = n.nodeValue;
+      n.nodeValue = en.replace(key.length ? en.trim() : en, lt);
+      undo.push(() => { n.nodeValue = en; });
+    });
+    // 3) attributes people see or hear
+    $$('[placeholder], [aria-label], [alt], [title]').forEach(el => {
+      ['placeholder', 'aria-label', 'alt', 'title'].forEach(attr => {
+        const v = el.getAttribute(attr), lt = v && LT.TEXT[squash(v)];
+        if (!lt) return;
+        el.setAttribute(attr, lt);
+        undo.push(() => el.setAttribute(attr, v));
+      });
+    });
+    const title = document.title, ltTitle = LT.TEXT[title];
+    if (ltTitle) { document.title = ltTitle; undo.push(() => { document.title = title; }); }
+  };
+  const toEN = () => { undo.reverse().forEach(fn => fn()); undo = []; };
+
+  const syncLangUI = () => {
+    document.documentElement.lang = lang;
+    $$('.lang button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.lang === lang)));
+  };
+  const setLang = next => {
+    if (next === lang) return;
+    lang = next;
+    try { localStorage.setItem('tennico-lang', lang); } catch (e) {}
+    const run = () => { lang === 'lt' ? toLT() : toEN(); syncLangUI(); };
+    // same circle reveal as the page transition
+    document.startViewTransition && !reduce.matches ? document.startViewTransition(run) : run();
+  };
+
   /* ================= per-page features (re-run after every page swap) ================= */
   let cleanups = [];
   const later = fn => cleanups.push(fn);
@@ -200,16 +259,22 @@
     /* "Button 2" states: Default → Sending → Success (contact form, Load More) */
     const sendState = btn => {
       const label = $('span', btn);
-      label.textContent = 'Sending...';
-      const t = setTimeout(() => { label.textContent = 'Success'; }, 700);
-      later(() => clearTimeout(t));
+      label.textContent = t('Sending...');
+      const timer = setTimeout(() => { label.textContent = t('Success'); }, 700);
+      later(() => clearTimeout(timer));
     };
     const form = $('#form');
     if (form) form.addEventListener('submit', e => { e.preventDefault(); sendState($('.btn', form)); });
     const more = $('#loadMore');
     if (more) more.addEventListener('click', () => sendState(more), { once: true });
     const sub = $('#subForm');
-    if (sub) sub.addEventListener('submit', e => { e.preventDefault(); $('.btn span', sub).textContent = 'Subscribed'; });
+    if (sub) sub.addEventListener('submit', e => { e.preventDefault(); $('.btn span', sub).textContent = t('Subscribed'); });
+
+    /* language switcher + apply the saved language to this page */
+    $$('.lang button').forEach(b => b.addEventListener('click', () => setLang(b.dataset.lang)));
+    undo = [];
+    if (lang === 'lt') toLT();
+    syncLangUI();
   };
 
   /* ================= page navigation with Framer's page transition ================= */
@@ -245,7 +310,7 @@
     };
     if (document.startViewTransition && !reduce.matches) {
       const vt = document.startViewTransition(swap);
-      vt.finished.finally(() => { navigating = false; });
+      vt.updateCallbackDone.finally(() => { navigating = false; });   // free as soon as the new page is in
     } else { swap(); navigating = false; }
   };
 
