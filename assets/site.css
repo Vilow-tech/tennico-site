@@ -208,7 +208,7 @@ section{position:relative;overflow:clip}
 
 /* ============ video ============ */
 .video{padding:195px 0 45px}
-.vwrap{border-radius:10px;overflow:hidden;aspect-ratio:1160/737}
+.vwrap{border-radius:10px;overflow:hidden;aspect-ratio:1160/737;background:var(--dark) url(video-poster.jpg) center/cover no-repeat}
 .vwrap video{width:100%;height:100%;object-fit:cover;display:block}
 
 /* ============ contact ============ */

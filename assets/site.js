@@ -59,7 +59,7 @@
   let cleanups = [];
   const later = fn => cleanups.push(fn);
 
-  const init = () => {
+  const init = (afterSwap = false) => {
     /* hero background appear: opacity 0 + scale 1.1 → 1 over 1s */
     const heroImg = $('.hero-bg img');
     const showHero = () => requestAnimationFrame(() => requestAnimationFrame(() => $$('.hero-bg, .pshade').forEach(el => el.classList.add('in'))));
@@ -187,8 +187,15 @@
       later(() => { cancelAnimationFrame(id); removeEventListener('resize', onResize); });
     }
 
-    /* video autoplay after a page swap */
-    $$('video[autoplay]').forEach(v => { v.muted = true; v.play().catch(() => {}); });
+    /* videos moved in from a fetched page never start loading on their own,
+       so rebuild them as fresh elements created in this document */
+    if (afterSwap) $$('video').forEach(old => {
+      const v = document.createElement('video');
+      [...old.attributes].forEach(a => v.setAttribute(a.name, a.value));
+      v.muted = true; v.playsInline = true;
+      old.replaceWith(v);
+      if (v.autoplay) v.play().catch(() => {});
+    });
 
     /* "Button 2" states: Default → Sending → Success (contact form, Load More) */
     const sendState = btn => {
@@ -234,7 +241,7 @@
       document.body.replaceWith(document.adoptNode(doc.body));
       if (push) history.pushState({}, '', url);
       scrollToHash(new URL(url, location.href).hash, false);
-      init();
+      init(true);
     };
     if (document.startViewTransition && !reduce.matches) {
       const vt = document.startViewTransition(swap);
