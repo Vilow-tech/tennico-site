@@ -10,113 +10,123 @@
 <style>
 :root{
   --dark:#153D2B; --green:#426147; --lime:#C7F36B; --orange:#FF7A33;
-  --cream:#F7F8F2; --white:#fff; --text:#555; --muted:#999;
-  --line:rgba(66,97,71,.14);
-  --ease:cubic-bezier(.22,1,.36,1);
-  --container:1200px;
+  --cream:#F7F8F2; --text:#555; --line:rgba(66,97,71,.14);
+  /* Framer transition values (springs are replaced at runtime by exact linear() curves) */
+  --lin:linear;
+  --io:cubic-bezier(.44,0,.56,1);
+  --sp-btn:cubic-bezier(.3,1.25,.55,1);       --sp-btn-d:.4s;   /* spring bounce .2, .4s */
+  --sp-head:cubic-bezier(.3,1.3,.55,1);       --sp-head-d:.7s;  /* spring bounce .25, .7s */
+  --sp-stiff:cubic-bezier(.2,.9,.3,1);        --sp-stiff-d:.6s; /* spring k320 c50 */
+  --sp-2:cubic-bezier(.3,1.25,.55,1);         --sp-2-d:2s;      /* spring bounce .2, 2s */
+  --sp-3:cubic-bezier(.3,1.25,.55,1);         --sp-3-d:3s;      /* spring bounce .2, 3s */
 }
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
-body{font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.5;color:var(--text);background:var(--white);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+html{scroll-behavior:auto}
+body{font-family:Inter,system-ui,sans-serif;font-size:16px;line-height:1.5;color:var(--text);background:#fff;-webkit-font-smoothing:antialiased;overflow-x:hidden}
 img{display:block;max-width:100%}
 a{color:inherit;text-decoration:none}
 button,input,select{font:inherit}
-.container{width:100%;max-width:var(--container);margin:0 auto;padding:0 20px}
-.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;line-height:1.05;letter-spacing:0}
+.container{width:100%;max-width:1200px;margin:0 auto;padding:0 20px}
+.display{font-family:Anton,Impact,sans-serif;font-weight:400;text-transform:uppercase;line-height:1.05}
 .h2{font-size:64px;color:var(--green)}
-.o{color:var(--orange)} .l{color:var(--lime)} .w{color:#fff}
+.o{color:var(--orange)} .l{color:var(--lime)}
 
-/* ---------- reveal animations ---------- */
-[data-reveal]{opacity:0;transform:translateY(75px);transition:opacity 1s var(--ease),transform 1s var(--ease)}
-[data-reveal].in{opacity:1;transform:none}
-[data-fade]{opacity:0;transition:opacity 1.1s var(--ease)}
-[data-fade].in{opacity:1}
-.flip-wrap{perspective:1400px}
-[data-flip]{opacity:0;transform:rotateY(180deg);transition:opacity .5s ease,transform 1.1s var(--ease);backface-visibility:hidden}
-[data-flip].in{opacity:1;transform:none}
+/* ============ appear effects (values taken from the original) ============ */
+[data-a]{will-change:transform,opacity}
+[data-a="up"]{opacity:0;transform:translateY(75px);transition:opacity .5s linear,transform .5s linear}
+[data-a="up6"]{opacity:0;transform:translateY(75px);transition:opacity .6s linear,transform .6s linear}
+[data-a="up25"]{opacity:0;transform:translateY(25px);transition:opacity .5s linear,transform .5s linear}
+[data-a="upSpring"]{opacity:0;transform:translateY(75px);transition:opacity var(--sp-stiff-d) var(--sp-stiff),transform var(--sp-stiff-d) var(--sp-stiff)}
+[data-a="fade"]{opacity:0;transition:opacity .5s linear}
+[data-a="fromL"]{opacity:0;transform:translateX(-75px);transition:opacity .5s linear,transform .5s linear}
+[data-a="fromR"]{opacity:0;transform:translateX(75px);transition:opacity .5s linear,transform .5s linear}
+[data-a="row"]{opacity:0;transform:translateX(-20px);transition:opacity .45s var(--io),transform .45s var(--io)}
+[data-a="headL"]{opacity:0;transform:translateY(40px) rotate(-3deg) scale(.95);transition:opacity var(--sp-head-d) var(--sp-head),transform var(--sp-head-d) var(--sp-head)}
+[data-a="headM"]{opacity:0;transform:translateY(40px) scale(.95);transition:opacity var(--sp-head-d) var(--sp-head) .1s,transform var(--sp-head-d) var(--sp-head) .1s}
+[data-a="headR"]{opacity:0;transform:translateY(40px) rotate(3deg) scale(.95);transition:opacity var(--sp-head-d) var(--sp-head) .2s,transform var(--sp-head-d) var(--sp-head) .2s}
+[data-a^="flip"]{opacity:0;transform:rotateY(180deg)}
+[data-a="flip1"]{transition:opacity var(--sp-stiff-d) var(--sp-stiff),transform var(--sp-stiff-d) var(--sp-stiff)}
+[data-a="flip2"]{transition:opacity var(--sp-2-d) var(--sp-2),transform var(--sp-2-d) var(--sp-2)}
+[data-a="flip3"]{transition:opacity 1s linear,transform 1s linear}
+[data-a="flip4"]{transition:opacity var(--sp-3-d) var(--sp-3),transform var(--sp-3-d) var(--sp-3)}
+[data-a].in{opacity:1;transform:none}
 
-/* ---------- badge ---------- */
+/* ============ badge ============ */
 .badge{display:inline-flex;align-items:center;gap:6px;padding:4px 8px 4px 4px;border:1px solid var(--line);border-radius:4px;background:#fff;font-size:14px;font-weight:500;color:var(--green);text-transform:uppercase}
 .badge i{width:20px;height:20px;border-radius:3px;background:var(--green);display:grid;place-items:center}
 .badge i::after{content:"";width:12px;height:12px;border-radius:50%;background:var(--lime);box-shadow:inset 3px 0 0 -1.5px var(--green),inset -3px 0 0 -1.5px var(--green)}
+.badge.nc{text-transform:none}
 .badge.dark{background:transparent;border-color:rgba(255,255,255,.18);color:#fff}
-.badge.orange i{background:var(--orange)} .badge.orange i::after{background:#fff;box-shadow:inset 3px 0 0 -1.5px var(--orange),inset -3px 0 0 -1.5px var(--orange)}
+.badge.orange i{background:var(--orange)}
+.badge.orange i::after{background:#fff;box-shadow:inset 3px 0 0 -1.5px var(--orange),inset -3px 0 0 -1.5px var(--orange)}
 
-/* ---------- button (icon box expands on hover) ---------- */
-.btn{position:relative;display:inline-flex;align-items:center;gap:16px;height:50px;padding:0 5px 0 24px;border-radius:6px;background:#fff;color:var(--green);font-weight:500;overflow:hidden;isolation:isolate;border:1px solid var(--line);cursor:pointer;white-space:nowrap}
-.btn .ib{position:absolute;right:5px;top:50%;width:40px;height:40px;margin-top:-20px;border-radius:4px;background:var(--green);z-index:-1;transition:width .55s var(--ease),right .55s var(--ease),height .55s var(--ease),margin .55s var(--ease)}
-.btn span{transition:color .4s var(--ease)}
-.btn svg{width:40px;height:40px;padding:12px;color:#fff;flex:none;transition:transform .55s var(--ease)}
-.btn:hover .ib{width:calc(100% - 10px)}
-.btn:hover span{color:#fff}
-.btn:hover svg{transform:translateX(3px)}
-.btn.lime{background:var(--lime);border-color:transparent;color:var(--dark)}
-.btn.lime .ib{background:var(--green)}
+/* ============ button: icon box grows to fill on hover (spring bounce .2, .4s) ============ */
+.btn{--bg:#fff;--fg:var(--green);--box:var(--green);--hfg:#fff;--t:var(--sp-btn-d) var(--sp-btn);
+  position:relative;display:inline-flex;align-items:center;gap:16px;height:50px;padding:0 5px 0 24px;border-radius:6px;background:var(--bg);color:var(--fg);font-weight:500;overflow:hidden;isolation:isolate;border:1px solid var(--line);cursor:pointer;white-space:nowrap}
+.btn .ib{position:absolute;right:5px;top:5px;bottom:5px;left:calc(100% - 45px);border-radius:4px;background:var(--box);z-index:-1;transition:left var(--t)}
+.btn span{transition:color var(--t)}
+.btn svg{width:40px;height:40px;padding:12px;color:#fff;flex:none}
+.btn:hover .ib{left:5px}
+.btn:hover span{color:var(--hfg)}
+.btn.lime{--bg:var(--lime);--fg:var(--dark);border-color:transparent}
+.btn.dark{--bg:var(--dark);--fg:#fff;--box:#fff;--hfg:var(--dark);border-color:transparent}
+.btn.dark svg{color:var(--dark)}
 .btn.sm{height:42px;padding-left:16px;font-size:15px}
-.btn.sm .ib{width:32px;height:32px;margin-top:-16px}
+.btn.sm .ib{left:calc(100% - 37px)}
+.btn.sm:hover .ib{left:5px}
 .btn.sm svg{width:32px;height:32px;padding:9px}
-.btn.sm:hover .ib{width:calc(100% - 10px)}
+.btn.linear{--t:.3s linear}
 
-/* ---------- nav ---------- */
-.nav{position:fixed;inset:20px 0 auto;z-index:50;display:flex;justify-content:center;padding:0 20px;pointer-events:none}
-.nav-in{pointer-events:auto;width:100%;max-width:1060px;display:flex;align-items:center;justify-content:space-between;padding:6px 6px 6px 24px;border-radius:8px;transition:background .5s var(--ease),backdrop-filter .5s,box-shadow .5s}
-.nav.scrolled .nav-in{background:rgba(21,61,43,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 10px 30px rgba(0,0,0,.12)}
+/* ============ nav (absolute: scrolls away with the hero, like the original) ============ */
+.nav{position:absolute;top:24px;left:0;right:0;z-index:50;display:flex;justify-content:center;padding:0 20px}
+.nav-in{width:100%;max-width:1060px;display:flex;align-items:center;justify-content:space-between;padding:6px 6px 6px 24px;border-radius:8px}
 .logo{font-family:Anton,sans-serif;font-size:34px;line-height:1;color:#fff;letter-spacing:.5px}
 .logo b{font-weight:400;color:var(--orange)}
 .links{display:flex;gap:28px}
-.links a{position:relative;color:rgba(255,255,255,.85);font-size:15px;font-weight:500;overflow:hidden;display:block;height:22px}
-.links a span{display:block;transition:transform .5s var(--ease)}
-.links a span:last-child{position:absolute;top:100%;left:0;color:var(--lime)}
-.links a:hover span{transform:translateY(-100%)}
+.links a{color:#fff;font-size:15px;font-weight:500;transition:color var(--sp-btn-d) var(--sp-btn)}
+.links a:hover{color:var(--orange)}
 .burger{display:none;width:44px;height:44px;border-radius:6px;background:#fff;border:0;cursor:pointer;place-items:center}
-.burger i{display:block;width:18px;height:2px;background:var(--green);position:relative;transition:transform .4s var(--ease)}
-.burger i::before,.burger i::after{content:"";position:absolute;left:0;width:18px;height:2px;background:var(--green);transition:transform .4s var(--ease),top .4s var(--ease)}
+.burger i{display:block;width:18px;height:2px;background:var(--green);position:relative}
+.burger i::before,.burger i::after{content:"";position:absolute;left:0;width:18px;height:2px;background:var(--green);transition:transform .4s var(--sp-btn),top .4s var(--sp-btn)}
 .burger i::before{top:-6px}.burger i::after{top:6px}
 .nav.open .burger i{background:transparent}
 .nav.open .burger i::before{top:0;transform:rotate(45deg)}
 .nav.open .burger i::after{top:0;transform:rotate(-45deg)}
 .mmenu{display:none}
 
-/* ---------- hero ---------- */
+/* ============ hero ============ */
 .hero{position:relative;height:980px;max-height:110vh;min-height:640px;overflow:hidden;background:#a7b9a1}
-.hero-bg{position:absolute;inset:-6% 0 0;opacity:0;transform:scale(1.1);transition:opacity 1.4s var(--ease),transform 1.8s var(--ease);will-change:transform}
+.hero-bg{position:absolute;inset:0;opacity:0;transform:scale(1.1);transition:opacity 1s var(--io),transform 1s var(--io)}
 .hero-bg img{width:100%;height:100%;object-fit:cover;object-position:center top}
-.loaded .hero-bg{opacity:1;transform:scale(1)}
+.hero-bg.in{opacity:1;transform:none}
 .hero-grad{position:absolute;inset:0;background:linear-gradient(180deg,rgba(21,61,43,.25) 0%,rgba(21,61,43,0) 30%,rgba(21,61,43,0) 55%,rgba(21,61,43,.55) 100%)}
 .hero-title{position:absolute;left:0;right:0;bottom:70px;text-align:center;color:#fff;font-size:clamp(64px,12.2vw,176px);line-height:.92}
-.hero-title .line{display:block;overflow:hidden;padding-top:.04em}
-.hero-title .word{display:inline-block;transform:translateY(110%);transition:transform 1.2s var(--ease)}
-.loaded .hero-title .word{transform:none}
+.hero-title span{display:block}
 
-/* ---------- section shells ---------- */
+/* ============ shells ============ */
 section{position:relative;overflow:clip}
 .pad{padding:120px 0}
 .head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:40px;margin-bottom:56px}
-.head-row .h2{margin-top:16px}
+.head-row .h2,.center .h2{margin-top:16px}
 .center{text-align:center}
-.center .h2{margin-top:16px}
 
-/* ---------- who we are ---------- */
+/* ============ who we are ============ */
 .who{padding:195px 0 45px}
 .who-grid{display:grid;grid-template-columns:1.18fr .9fr .9fr;gap:20px;height:517px}
 .quote-card{background:var(--lime);border-radius:10px;padding:30px;display:flex;flex-direction:column;justify-content:space-between;border:6px solid #e7f9c3}
 .quote-card .qm{font-family:Anton;font-size:64px;line-height:.6;color:var(--green);height:36px}
 .quote-card p{font-family:Anton;text-transform:uppercase;font-size:26px;line-height:1.25;color:var(--green)}
 .partners{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;background:#fff;border-radius:6px;padding:12px}
-.partners span{height:26px;display:grid;place-items:center;font-family:Anton;font-size:14px;color:var(--dark);letter-spacing:1px;opacity:.85}
+.partners span{height:26px;display:grid;place-items:center;font-family:Anton;font-size:14px;color:var(--dark);letter-spacing:1px}
 .stats{display:grid;grid-template-rows:1fr 1fr;gap:20px}
 .stat{border-radius:10px;padding:26px;display:flex;flex-direction:column;justify-content:space-between;color:#fff}
 .stat.g{background:var(--green)} .stat.or{background:var(--orange)}
-.stat .num{font-family:Anton;font-size:80px;line-height:1;display:flex}
+.stat .num{font-family:Anton;font-size:100px;line-height:.9}
 .stat .lbl{font-family:Anton;font-size:26px;text-transform:uppercase;line-height:1.1}
-.roll{display:inline-block;height:1em;overflow:hidden;line-height:1}
-.roll span{display:flex;flex-direction:column;transition:transform 2.2s var(--ease)}
-.roll span b{font-weight:400;height:1em}
 .photo{border-radius:10px;overflow:hidden}
-.photo img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
-.photo:hover img{transform:scale(1.06)}
+.photo img{width:100%;height:100%;object-fit:cover}
 
-/* ---------- programs ---------- */
+/* ============ programs ============ */
 .programs{background:var(--cream)}
 .prog{display:grid;grid-template-columns:1fr 1.18fr;gap:20px;min-height:604px;margin-top:20px}
 .prog .photo{height:599px;border-radius:8px}
@@ -130,72 +140,69 @@ section{position:relative;overflow:clip}
 .tags{margin-top:auto;display:flex;flex-wrap:wrap;gap:8px}
 .tags span{padding:6px 10px;border:1px solid rgba(66,97,71,.2);border-radius:4px;font-size:14px;font-weight:500;text-transform:uppercase;color:var(--green)}
 
-/* ---------- why choose ---------- */
+/* ============ why choose us ============ */
 .why{padding:195px 0 0}
 .why .h2{font-size:70px}
-.why-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:56px;height:548px}
-.why-left{display:grid;grid-template-rows:auto 1fr 1fr;gap:20px}
-.why-left .tiles{display:grid;grid-template-columns:1fr 1fr;gap:20px}
-.coach-count{display:flex;align-items:center;justify-content:space-between;background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:20px 24px}
-.coach-count strong{font-family:Anton;font-weight:400;font-size:26px;color:var(--green);text-transform:uppercase}
+.why-grid{display:grid;grid-template-columns:588fr 592fr;gap:20px;margin-top:56px;height:536px}
+.why-left{display:grid;grid-template-rows:256px 260px;gap:20px}
+.tiles{display:grid;grid-template-columns:282fr 286fr;gap:20px}
+.tile{position:relative;border-radius:10px;overflow:hidden;display:flex;flex-direction:column;align-items:center;padding:30px}
+.tile.g{background:var(--green);color:#fff}
+.tile.lm{background:var(--lime);color:var(--green);padding:30px 10px}
+.tile .deco{position:absolute;opacity:.1;pointer-events:none}
+.tile.g .deco{left:-27px;top:-18px;width:147px;height:147px}
+.tile.lm .deco{left:-48px;top:127px;width:137px;height:152px}
 .avatars{display:flex}
-.avatars img{width:40px;height:40px;border-radius:50%;border:2px solid #fff;object-fit:cover;margin-left:-12px}
-.tile{position:relative;border-radius:10px;padding:22px;display:flex;align-items:flex-end;overflow:hidden;min-height:120px}
-.tile h4{font-family:Anton;font-weight:400;font-size:26px;text-transform:uppercase;position:relative;z-index:1;line-height:1.1}
-.tile.g{background:var(--green);color:#fff}.tile.lm{background:var(--lime);color:var(--green)}
-.tile .ring{position:absolute;right:-30px;top:-30px;width:130px;height:130px;border-radius:50%;border:2px solid currentColor;opacity:.18;transition:transform 1s var(--ease)}
-.tile:hover .ring{transform:scale(1.25) rotate(40deg)}
-.img-tile{position:relative;border-radius:10px;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:24px}
-.img-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
-.img-tile:hover img{transform:scale(1.06)}
-.img-tile::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.6),transparent 70%);z-index:1}
+.avatars img{width:40px;height:40px;border-radius:50%;border:2px solid var(--green);object-fit:cover;margin-left:-10px}
+.avatars img:first-child{margin-left:0}
+.tile small{font-size:16px;margin-top:10px}
+.tile .icon{width:100px;height:100px}
+.tile h4{position:absolute;left:30px;bottom:30px;font-family:Anton;font-weight:400;font-size:32px;text-transform:uppercase;line-height:1.2}
+.tile.lm h4{left:10px}
+.img-tile{position:relative;border-radius:10px;overflow:hidden;color:#fff;display:flex;flex-direction:column;justify-content:flex-end;padding:30px}
+.img-tile img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.img-tile::before{content:"";position:absolute;inset:0;background:linear-gradient(0deg,rgba(0,0,0,.55),transparent 75%);z-index:1}
 .img-tile h4,.img-tile p{position:relative;z-index:2}
-.img-tile h4{font-family:Anton;font-weight:400;font-size:28px;text-transform:uppercase}
-.img-tile p{font-size:14px;opacity:.9}
+.img-tile h4{font-family:Anton;font-weight:400;font-size:32px;text-transform:uppercase;line-height:1.2;margin-bottom:14px}
 .slider{position:relative;border-radius:10px;overflow:hidden}
-.slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transform:scale(1.08);transition:opacity 1s var(--ease),transform 6s linear}
-.slider img.on{opacity:1;transform:scale(1)}
-.dots{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:6px;z-index:2}
-.dots button{width:24px;height:4px;border-radius:2px;border:0;background:rgba(255,255,255,.4);cursor:pointer;overflow:hidden;position:relative}
-.dots button::after{content:"";position:absolute;inset:0;background:#fff;transform:scaleX(0);transform-origin:left}
-.dots button.on::after{animation:dot 4.5s linear forwards}
-@keyframes dot{to{transform:scaleX(1)}}
+.slider img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;visibility:hidden}
+.slider img.on{visibility:visible}
+.dots{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);display:flex;gap:8px;z-index:2}
+.dots button{width:30px;height:2px;border:0;background:#fff;cursor:pointer;padding:0;transition:background-color var(--sp-btn-d) var(--sp-btn)}
+.dots button.on{background:var(--lime)}
 .divider{height:1px;background:var(--line);margin-top:120px}
 
-/* ---------- pathway ---------- */
+/* ============ pathway ============ */
 .path{padding:120px 0}
 .path-cards{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;height:340px;margin-top:56px}
-.pcard{border-radius:10px;padding:28px;display:flex;flex-direction:column;justify-content:space-between;transition:transform .6s var(--ease),opacity .5s ease}
-.pcard.in:hover{transform:translateY(-8px)}
+.pcard{border-radius:10px;padding:28px;display:flex;flex-direction:column;justify-content:space-between}
 .pcard .num{font-family:Anton;font-size:34px}
 .pcard h4{font-family:Anton;font-weight:400;font-size:32px;text-transform:uppercase;margin-bottom:10px}
 .pcard p{font-size:15px}
-.pc1{background:var(--lime);color:var(--green)}.pc1 p{color:var(--green)}
+.pc1{background:var(--lime);color:var(--green)}
 .pc2,.pc4{background:var(--green);color:#fff}.pc2 p,.pc4 p{color:rgba(255,255,255,.8)}
 .pc3{background:var(--orange);color:#fff}.pc3 p{color:rgba(255,255,255,.9)}
 
-/* ---------- coaches ---------- */
+/* ============ coaches ============ */
 .coaches{background:var(--cream);padding:75px 0 120px}
 .coach-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:56px}
 .coach{position:relative;aspect-ratio:370/417;border-radius:10px;overflow:hidden;cursor:pointer}
-.coach img{width:100%;height:100%;object-fit:cover;transition:transform 1.2s var(--ease)}
-.coach:hover img{transform:scale(1.07)}
-.coach .tag{position:absolute;left:16px;right:16px;bottom:16px;padding:14px 18px;border-radius:6px;background:#fff;display:flex;justify-content:space-between;align-items:center;transform:translateY(calc(100% + 20px));transition:transform .6s var(--ease)}
-.coach:hover .tag{transform:none}
-.coach .tag b{font-family:Anton;font-weight:400;font-size:22px;color:var(--green);text-transform:uppercase}
-.coach .tag small{color:var(--orange);font-weight:600;font-size:13px;text-transform:uppercase}
+.coach img{width:100%;height:100%;object-fit:cover}
+.identity{position:absolute;left:20px;right:20px;bottom:20px;height:86px;padding:0 20px;border-radius:4px;background:#fff;display:flex;justify-content:space-between;align-items:center;opacity:0;transform:translateY(25px);transition:none;pointer-events:none}
+.coach:hover .identity{opacity:1;transform:none;transition:opacity .4s linear,transform .4s linear}
+.identity b{font-family:Anton;font-weight:400;font-size:26px;color:var(--green);text-transform:uppercase}
+.identity .soc{display:flex;gap:16px;color:var(--dark)}
+.identity svg{width:24px;height:24px}
 
-/* ---------- reviews ---------- */
+/* ============ reviews ============ */
 .reviews{background:var(--dark);padding:120px 0}
 .reviews .h2{color:#fff}
-.score{text-align:left}
 .score .big{font-family:Anton;font-size:80px;line-height:1;color:var(--orange)}
 .score .big em{font-style:normal;color:rgba(255,255,255,.35)}
 .stars{color:var(--lime);letter-spacing:4px;font-size:14px;margin:10px 0 6px}
 .score small{color:rgba(255,255,255,.6);font-size:15px}
 .rev-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
-.rev{border-radius:10px;padding:28px;display:flex;flex-direction:column;transition:transform .6s var(--ease)}
-.rev:hover{transform:translateY(-8px) rotate(-.6deg)}
+.rev{border-radius:10px;padding:28px;display:flex;flex-direction:column}
 .rev .top{display:flex;justify-content:space-between;align-items:center}
 .rev .qm{font-family:Anton;font-size:44px;line-height:.6;height:24px}
 .rev .st{letter-spacing:3px;font-size:13px}
@@ -205,18 +212,16 @@ section{position:relative;overflow:clip}
 .rev .who img{width:46px;height:46px;border-radius:50%;object-fit:cover}
 .rev .who b{display:block;font-weight:600;text-transform:uppercase;font-size:15px}
 .rev .who span{font-size:14px;opacity:.75}
-.rv-l{background:var(--lime);color:var(--green)}.rv-l p{color:var(--green)}
+.rv-l{background:var(--lime);color:var(--green)}
 .rv-w{background:var(--cream);color:var(--dark)}.rv-w .qm,.rv-w .st{color:var(--orange)}
-.rv-g{background:var(--green);color:#fff}.rv-g p{color:rgba(255,255,255,.85)}.rv-g .who{border-color:rgba(255,255,255,.15)}.rv-g .who b{color:var(--lime)}.rv-g .qm,.rv-g .st{color:var(--lime)}
+.rv-g{background:var(--green);color:#fff}.rv-g p{color:rgba(255,255,255,.85)}.rv-g .who{border-color:rgba(255,255,255,.15)}.rv-g .who b,.rv-g .qm,.rv-g .st{color:var(--lime)}
 
-/* ---------- video ---------- */
+/* ============ video ============ */
 .video{padding:195px 0 45px}
-.vwrap{position:relative;border-radius:10px;overflow:hidden;aspect-ratio:1160/737;transform-origin:center;will-change:transform}
-.vwrap video{width:100%;height:100%;object-fit:cover}
-.vbtn{position:absolute;right:24px;bottom:24px;width:56px;height:56px;border-radius:50%;border:0;background:#fff;color:var(--green);display:grid;place-items:center;cursor:pointer;transition:transform .4s var(--ease)}
-.vbtn:hover{transform:scale(1.08)}
+.vwrap{border-radius:10px;overflow:hidden;aspect-ratio:1160/737}
+.vwrap video{width:100%;height:100%;object-fit:cover;display:block}
 
-/* ---------- contact ---------- */
+/* ============ contact ============ */
 .contact{padding:120px 0}
 .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
 .contact .h2{margin:16px 0 24px}
@@ -224,43 +229,41 @@ section{position:relative;overflow:clip}
 .follow{margin-top:40px}
 .follow h5{font-size:14px;font-weight:600;text-transform:uppercase;color:var(--green);margin-bottom:12px}
 .socials{display:flex;gap:10px}
-.socials a{width:44px;height:44px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;color:var(--dark);transition:background .4s var(--ease),color .4s,transform .4s var(--ease)}
-.socials a:hover{background:var(--green);color:#fff;transform:translateY(-3px)}
+.socials a{width:44px;height:44px;border-radius:6px;border:1px solid var(--line);display:grid;place-items:center;color:var(--dark);transition:color var(--sp-btn-d) var(--sp-btn)}
+.socials a:hover{color:var(--orange)}
 .socials svg{width:18px;height:18px}
 .form-shell{background:var(--dark);border-radius:10px;padding:8px}
-form{background:var(--green);border-radius:6px;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px 14px}
-form .full{grid-column:1/-1}
-label{display:block;font-size:13px;font-weight:600;color:#fff;text-transform:uppercase;margin-bottom:8px}
-input,select{width:100%;height:46px;border-radius:5px;border:1px solid transparent;background:rgba(255,255,255,.12);color:#fff;padding:0 14px;outline:none;transition:border-color .3s,background .3s;appearance:none;-webkit-appearance:none}
-input::placeholder{color:rgba(255,255,255,.6)}
-input:focus,select:focus{border-color:var(--lime);background:rgba(255,255,255,.18)}
-select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='white' stroke-width='1.6'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
-select option{color:#000}
-form .btn{width:100%;justify-content:space-between;border:0}
+.cform{background:var(--green);border-radius:6px;padding:20px;display:grid;grid-template-columns:1fr 1fr;gap:18px 14px}
+.cform .full{grid-column:1/-1}
+.cform label{display:block;font-size:13px;font-weight:600;color:#fff;text-transform:uppercase;margin-bottom:8px}
+.cform input,.cform select{width:100%;height:46px;border-radius:5px;border:1px solid transparent;background:rgba(255,255,255,.12);color:#fff;padding:0 14px;outline:none;appearance:none;-webkit-appearance:none}
+.cform input::placeholder{color:rgba(255,255,255,.6)}
+.cform input:focus,.cform select:focus{border-color:var(--lime)}
+.cform select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' fill='none' stroke='white' stroke-width='1.6'%3E%3Cpath d='M1 1.5l5 5 5-5'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;cursor:pointer}
+.cform select option{color:#000}
+.cform .btn{width:100%;justify-content:space-between;border:0}
+.sent{grid-column:1/-1;color:var(--lime);font-weight:500;display:none}
 .support{margin-top:8px;background:var(--lime);border-radius:6px;padding:16px 16px 16px 20px;display:flex;justify-content:space-between;align-items:center;border:6px solid var(--dark)}
 .support small{font-size:13px;font-weight:600;text-transform:uppercase;color:var(--green)}
 .support b{display:block;font-family:Anton;font-weight:400;font-size:32px;color:var(--dark);line-height:1.1}
-.support a.call{width:58px;height:58px;border-radius:6px;background:var(--orange);display:grid;place-items:center;color:#fff;transition:transform .5s var(--ease)}
-.support a.call:hover{transform:rotate(-12deg) scale(1.06)}
-.sent{grid-column:1/-1;color:var(--lime);font-weight:500;display:none}
+.support a.call{width:58px;height:58px;border-radius:6px;background:var(--orange);display:grid;place-items:center;color:#fff}
 
-/* ---------- compare ---------- */
+/* ============ compare ============ */
 .compare{background:var(--dark);padding:120px 0}
-.outline{position:absolute;top:-40px;left:0;white-space:nowrap;font-family:Anton;font-size:320px;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(255,255,255,.08);text-transform:uppercase;display:flex;gap:80px;animation:marq 40s linear infinite;pointer-events:none}
-@keyframes marq{to{transform:translateX(-50%)}}
+.outline{position:absolute;top:-200px;left:calc(50% + 32px);font-family:Anton;font-size:320px;line-height:1;color:transparent;-webkit-text-stroke:1.5px rgba(199,243,107,.18);text-transform:uppercase;pointer-events:none;white-space:nowrap}
 .compare .h2{color:#fff}
 .pill{display:inline-flex;align-items:center;gap:10px;padding:8px 18px 8px 8px;border-radius:40px;border:1px solid rgba(255,255,255,.15);background:rgba(255,255,255,.05);color:#fff;font-size:15px}
-.pill i{width:30px;height:30px;border-radius:50%;background:var(--green);display:grid;place-items:center}
-.pill i::after{content:"";width:14px;height:14px;border-radius:50%;background:var(--lime);box-shadow:inset 4px 0 0 -2.5px var(--green),inset -4px 0 0 -2.5px var(--green)}
+.spin{width:30px;height:30px;border-radius:50%;background:var(--green);display:grid;place-items:center;animation:spin 6s linear infinite}
+.spin::after{content:"";width:14px;height:14px;border-radius:50%;background:var(--lime);box-shadow:inset 4px 0 0 -2.5px var(--green),inset -4px 0 0 -2.5px var(--green)}
+@keyframes spin{to{transform:rotate(360deg)}}
 .table-scroll{overflow-x:auto;border-radius:10px}
 .ptable{min-width:900px;background:var(--green);border-radius:10px;padding:8px}
 .prow{display:grid;grid-template-columns:1.1fr 1fr 1fr 1fr}
-.phead{padding:12px 4px 12px;gap:8px}
+.phead{padding:12px 4px;gap:8px}
 .phead .pf{padding:20px}
 .phead .pf h3{font-family:Anton;font-weight:400;font-size:32px;color:#fff;text-transform:uppercase}
 .phead .pf p{color:rgba(255,255,255,.7);font-size:15px;max-width:180px}
-.plan{border-radius:8px;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:150px;transition:transform .5s var(--ease)}
-.plan:hover{transform:translateY(-6px)}
+.plan{border-radius:8px;padding:20px;display:flex;flex-direction:column;justify-content:flex-end;gap:6px;min-height:150px}
 .plan h5{font-family:Anton;font-weight:400;font-size:20px;text-transform:uppercase}
 .plan .pr{font-family:Anton;font-size:40px;line-height:1}
 .plan .pr small{font-family:Inter;font-size:15px}
@@ -275,8 +278,6 @@ form .btn{width:100%;justify-content:space-between;border:0}
 .pbody .prow:nth-child(even){background:#f0f2e8}
 .pbody .prow>div{padding:12px 16px;font-size:15px;min-height:48px;display:flex;align-items:center}
 .pbody .prow>div:nth-child(3){background:rgba(199,243,107,.35)}
-.pbody .prow:hover>div{background:rgba(199,243,107,.18)}
-.pbody .prow:hover>div:nth-child(3){background:rgba(199,243,107,.5)}
 .ck{width:20px;height:20px;border-radius:50%;background:var(--green);display:grid;place-items:center}
 .ck::after{content:"";width:8px;height:4px;border-left:2px solid #fff;border-bottom:2px solid #fff;transform:rotate(-45deg) translate(1px,-1px)}
 .dash{width:20px;height:20px;border-radius:50%;background:rgba(66,97,71,.12);display:grid;place-items:center}
@@ -284,65 +285,61 @@ form .btn{width:100%;justify-content:space-between;border:0}
 .pfoot{padding:20px 16px 12px;align-items:center}
 .pfoot p{color:rgba(255,255,255,.75);font-size:15px;max-width:220px}
 
-/* ---------- faq ---------- */
+/* ============ faq ============ */
 .faq{padding:195px 0 45px}
 .faq .h2{font-size:70px}
 .faq-grid{display:grid;grid-template-columns:552fr 628fr;gap:20px;margin-top:56px}
 .faq-grid .photo{height:617px}
 .acc{display:flex;flex-direction:column;gap:10px}
-.item{background:var(--green);border-radius:6px;overflow:hidden}
-.q{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;padding:22px 20px;background:none;border:0;color:#fff;cursor:pointer;text-align:left}
+.item{border-radius:6px;overflow:hidden;background:var(--green)}
+.item.open{background:linear-gradient(180deg,var(--green) 0%,var(--dark) 100%)}
+.q{width:100%;display:flex;justify-content:space-between;align-items:center;gap:20px;height:80px;padding:0 20px;background:none;border:0;color:#fff;cursor:pointer;text-align:left}
 .q span{font-family:Anton;font-size:22px;text-transform:uppercase;line-height:1.2}
-.q i{width:26px;height:26px;border-radius:4px;background:var(--orange);position:relative;flex:none;transition:transform .5s var(--ease)}
-.q i::before,.q i::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:2px;margin:-1px 0 0 -5.5px;background:#fff;transition:transform .5s var(--ease)}
-.q i::after{transform:rotate(90deg)}
-.item.open .q i{transform:rotate(180deg)}
-.item.open .q i::after{transform:rotate(0)}
-.a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .6s var(--ease)}
+.q i{width:26px;height:26px;border-radius:4px;background:var(--orange);position:relative;flex:none}
+.q i::before,.q i::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:2px;margin:-1px 0 0 -5.5px;background:#fff}
+.q i::after{transform:rotate(90deg);opacity:0}
+.item.open .q i::after{opacity:1}
+.a{display:grid;grid-template-rows:0fr;transition:grid-template-rows .5s linear}
 .a>div{overflow:hidden}
-.a .inner{padding:0 20px 24px;border-top:1px solid rgba(255,255,255,.12);padding-top:20px;margin:0 20px;padding-left:0;padding-right:0}
+.a .inner{margin:0 20px;padding:20px 0 24px;border-top:1px solid rgba(255,255,255,.12)}
 .a p{color:rgba(255,255,255,.8);font-size:15px;margin-bottom:20px}
 .item.open .a{grid-template-rows:1fr}
 
-/* ---------- footer ---------- */
+/* ============ footer ============ */
 footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 .cta{position:relative;padding:150px 0 70px;text-align:center}
-.cta-ball{position:absolute;left:50%;top:-80px;width:1026px;max-width:none;transform:translateX(-50%);opacity:.08;pointer-events:none;will-change:transform}
+.cta-ball{position:absolute;left:50%;top:-376px;width:1026px;max-width:none;transform:translateX(-50%);opacity:.06;pointer-events:none}
 .cta .h2{color:#fff;font-size:80px;margin:18px auto 40px;max-width:820px}
-.float{position:absolute;border-radius:50%;overflow:hidden;will-change:transform;box-shadow:0 20px 40px rgba(0,0,0,.25)}
+.float{position:absolute;overflow:hidden;width:108px;height:108px}
 .float img{width:100%;height:100%;object-fit:cover}
-.f1{width:108px;height:108px;left:9%;top:220px}
-.f2{width:108px;height:108px;right:9%;top:380px;border-radius:10px}
-.ticker{overflow:hidden;margin-top:110px;-webkit-mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent);mask:linear-gradient(90deg,transparent,#000 8%,#000 92%,transparent)}
-.track{display:flex;gap:10px;width:max-content;animation:marq 45s linear infinite}
-.ticker:hover .track{animation-play-state:paused}
-.track img{width:182px;height:182px;border-radius:10px;object-fit:cover;transition:transform .5s var(--ease)}
-.track img:hover{transform:scale(.95) rotate(-2deg)}
-.fbox{background:var(--green);border-radius:10px;padding:56px 56px 20px;margin-top:20px;margin-bottom:60px}
+.f1{left:9%;top:220px;border-radius:50%}
+.f2{right:9%;top:380px;border-radius:10px}
+.ticker{overflow:hidden;margin-top:110px}
+.track{display:flex;gap:10px;width:max-content;will-change:transform}
+.track img{width:182px;height:182px;border-radius:10px;object-fit:cover;flex:none}
+.fbox{background:var(--green);border-radius:10px;padding:56px 56px 20px;margin:20px 0 60px}
 .fgrid{display:grid;grid-template-columns:1.6fr .7fr .7fr;gap:40px}
 .fgrid h3{font-family:Anton;font-weight:400;font-size:34px;color:#fff;text-transform:uppercase;line-height:1.1}
 .sub{display:flex;margin-top:28px;max-width:400px;background:#fff;border-radius:6px;padding:5px}
-.sub input{background:none;color:var(--dark);height:42px;flex:1;min-width:0}
-.sub .btn{flex:none;width:auto}
+.sub input{flex:1;min-width:0;border:0;outline:0;background:none;color:var(--dark);height:42px;padding:0 10px}
 .sub input::placeholder{color:#888}
-.sub .btn{height:42px;background:var(--orange);color:#fff;border:0;padding-left:16px}
-.sub .btn .ib{background:rgba(255,255,255,.25);width:32px;height:32px;margin-top:-16px}
+.sub .btn{flex:none;--bg:var(--orange);--fg:#fff;--box:rgba(255,255,255,.25);height:42px;border:0;padding-left:16px}
+.sub .btn .ib{left:calc(100% - 37px)}
+.sub .btn:hover .ib{left:5px}
 .sub .btn svg{width:32px;height:32px;padding:9px}
-.sub .btn:hover .ib{width:calc(100% - 10px)}
 .fcol h6{font-size:14px;font-weight:600;color:#fff;text-transform:uppercase;margin-bottom:20px}
-.fcol a{display:block;color:rgba(255,255,255,.75);font-size:15px;margin-bottom:12px;transition:color .3s,transform .4s var(--ease)}
-.fcol a:hover{color:var(--lime);transform:translateX(4px)}
+.fcol a{display:block;color:rgba(255,255,255,.75);font-size:15px;margin-bottom:12px;transition:color var(--sp-btn-d) var(--sp-btn)}
+.fcol a:hover{color:var(--orange)}
 .biglogo{display:flex;align-items:center;justify-content:center;gap:20px;margin:70px 0 50px}
 .biglogo span{font-family:Anton;font-size:clamp(64px,15.5vw,224px);line-height:.9;color:#fff}
 .biglogo span b{font-weight:400;color:var(--orange)}
-.biglogo .fb{flex:none;width:clamp(64px,15vw,232px);aspect-ratio:1;border-radius:50%;background:var(--lime);position:relative;overflow:hidden;animation:spin 14s linear infinite}
+.biglogo .fb{flex:none;width:clamp(64px,15vw,232px);aspect-ratio:1;border-radius:50%;background:var(--lime);position:relative;overflow:hidden}
 .biglogo .fb::before,.biglogo .fb::after{content:"";position:absolute;top:-10%;width:60%;height:120%;border-radius:50%;border:clamp(8px,1.4vw,18px) solid var(--green)}
 .biglogo .fb::before{left:-38%}.biglogo .fb::after{right:-38%}
-@keyframes spin{to{transform:rotate(360deg)}}
 .copy{background:rgba(255,255,255,.15);border-radius:6px;padding:18px;text-align:center;color:rgba(255,255,255,.85);font-size:15px}
 .copy b{color:var(--lime);font-weight:500}
 
-/* ---------- responsive ---------- */
+/* ============ responsive (Framer breakpoints 1199 / 809) ============ */
 @media (max-width:1199px){
   .h2{font-size:52px}.why .h2,.faq .h2{font-size:56px}.cta .h2{font-size:64px}
   .who-grid{grid-template-columns:1fr 1fr;height:auto}
@@ -352,7 +349,6 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
   .prog .photo{height:auto;min-height:520px}
   .prog-card{padding:30px}.prog-card h3{font-size:40px}
   .why-grid{grid-template-columns:1fr;height:auto}
-  .why-left{grid-template-rows:auto 160px 260px}
   .slider{height:480px}
   .path-cards{grid-template-columns:1fr 1fr;height:auto}
   .pcard{min-height:280px}
@@ -363,7 +359,7 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 }
 @media (max-width:809px){
   .links,.nav .btn{display:none}.burger{display:grid}
-  .mmenu{display:flex;flex-direction:column;gap:6px;position:absolute;top:66px;left:20px;right:20px;background:var(--dark);border-radius:8px;padding:12px;opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .4s var(--ease),transform .4s var(--ease)}
+  .mmenu{display:flex;flex-direction:column;gap:6px;position:absolute;top:66px;left:20px;right:20px;background:var(--dark);border-radius:8px;padding:12px;opacity:0;transform:translateY(-10px);pointer-events:none;transition:opacity .4s var(--sp-btn),transform .4s var(--sp-btn)}
   .mmenu a{color:#fff;font-family:Anton;font-size:28px;text-transform:uppercase;padding:8px 12px}
   .nav.open .mmenu{opacity:1;transform:none;pointer-events:auto}
   .nav.open .nav-in{background:var(--dark)}
@@ -376,31 +372,28 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
   .who-grid{grid-template-columns:1fr}
   .quote-card{min-height:0;gap:24px}.quote-card p{font-size:22px}
   .stats{grid-template-rows:none;grid-template-columns:1fr 1fr}
-  .stat{min-height:200px}.stat .num{font-size:56px}.stat .lbl{font-size:20px}
+  .stat{min-height:200px}.stat .num{font-size:60px}.stat .lbl{font-size:20px}
   .prog{grid-template-columns:1fr}.prog .photo{min-height:360px}
   .prog-card h3{font-size:34px}
-  .why-left .tiles{grid-template-columns:1fr 1fr}
+  .why-left{grid-template-rows:220px 240px}
+  .tile h4,.img-tile h4{font-size:24px}
+  .tile{padding:20px 10px}.tile h4{left:16px;bottom:20px}
   .slider{height:380px}
   .path-cards{grid-template-columns:1fr}
   .coach-grid{grid-template-columns:1fr 1fr;gap:12px}
-  .coach .tag{transform:none;left:8px;right:8px;bottom:8px;padding:10px}
-  .coach .tag b{font-size:16px}.coach .tag small{display:none}
+  .identity{left:8px;right:8px;bottom:8px;height:auto;padding:10px;flex-direction:column;gap:6px}
+  .identity b{font-size:16px}
   .rev-grid{grid-template-columns:1fr}
   .contact-grid,.faq-grid{grid-template-columns:1fr;gap:40px}
-  form{grid-template-columns:1fr}
+  .cform{grid-template-columns:1fr}
   .faq-grid .photo{height:320px}
   .support b{font-size:26px}
-  .outline{font-size:180px}
+  .outline{font-size:180px;top:-110px;left:auto;right:-40px}
   .cta{padding:110px 0 50px}
   .ticker{margin-top:70px}.track img{width:130px;height:130px}
   .fbox{padding:32px 20px 16px}
   .fgrid{grid-template-columns:1fr 1fr;gap:32px}
   .biglogo{margin:48px 0 32px;gap:10px}
-}
-@media (prefers-reduced-motion:reduce){
-  *,*::before,*::after{animation:none!important;transition:none!important}
-  [data-reveal],[data-fade],[data-flip]{opacity:1;transform:none}
-  .hero-bg{opacity:1;transform:none}.hero-title .word{transform:none}
 }
 </style>
 </head>
@@ -408,6 +401,9 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
   <symbol id="arr" viewBox="0 0 16 12"><path d="M1 6h14M10 1l5 5-5 5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M4 4l16 16M20 4L4 20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-tt" viewBox="0 0 24 24"><path d="M14 3v11a4 4 0 1 1-4-4M14 3c0 3 2 5 5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></symbol>
+  <symbol id="i-yt" viewBox="0 0 24 24"><rect x="2.5" y="5" width="19" height="14" rx="4" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></symbol>
 </svg>
 
 <!-- NAV -->
@@ -415,10 +411,7 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
   <div class="nav-in">
     <a href="#top" class="logo">TENNI<b>CO</b></a>
     <nav class="links">
-      <a href="#about"><span>About</span><span>About</span></a>
-      <a href="#programs"><span>Programs</span><span>Programs</span></a>
-      <a href="#pricing"><span>Pricing</span><span>Pricing</span></a>
-      <a href="#contact"><span>Contact</span><span>Contact</span></a>
+      <a href="#about">About</a><a href="#programs">Programs</a><a href="#pricing">Pricing</a><a href="#contact">Contact</a>
     </nav>
     <a href="#contact" class="btn"><i class="ib"></i><span>Join Now</span><svg><use href="#arr"/></svg></a>
     <button class="burger" id="burger" aria-label="Menu"><i></i></button>
@@ -432,15 +425,12 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 <section class="hero" id="top">
   <div class="hero-bg" id="heroBg"><img src="https://framerusercontent.com/images/5p5kSdV7IWncVmrfiaRecKFg.png" alt="Tennis player mid swing"></div>
   <div class="hero-grad"></div>
-  <h1 class="hero-title display">
-    <span class="line"><span class="word">Play</span> <span class="word o" style="transition-delay:.08s">better</span></span>
-    <span class="line"><span class="word" style="transition-delay:.18s">Train</span> <span class="word" style="transition-delay:.26s">Smarter</span></span>
-  </h1>
+  <h1 class="hero-title display"><span>Play <span class="o" style="display:inline">better</span></span><span>Train Smarter</span></h1>
 </section>
 
 <!-- WHO WE ARE -->
 <section class="who" id="about">
-  <div class="container" data-reveal>
+  <div class="container" data-a="up6">
     <div class="head-row">
       <div>
         <span class="badge"><i></i>Who we are</span>
@@ -455,8 +445,8 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
         <div class="partners"><span>ACE</span><span>RALLY</span><span>SPIN</span><span>VOLLEY</span></div>
       </div>
       <div class="stats">
-        <div class="stat g"><div class="num"><span class="roll" data-to="10"></span>+</div><div class="lbl">Years of Excellence</div></div>
-        <div class="stat or"><div class="num"><span class="roll" data-to="500"></span>+</div><div class="lbl">Players Trained</div></div>
+        <div class="stat g"><div class="num"><span class="count" data-to="10">0</span>+</div><div class="lbl">Years of Excellence</div></div>
+        <div class="stat or"><div class="num"><span class="count" data-to="500">0</span>+</div><div class="lbl">Players Trained</div></div>
       </div>
       <div class="photo"><img src="https://framerusercontent.com/images/wc55muDRLFBOTbnAG4k7qPoigg.png" alt="Tennis player hitting a forehand"></div>
     </div>
@@ -465,8 +455,8 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 
 <!-- PROGRAMS -->
 <section class="programs pad" id="programs">
-  <div class="container">
-    <div class="head-row" data-reveal>
+  <div class="container" data-a="up">
+    <div class="head-row">
       <div>
         <span class="badge"><i></i>Programs</span>
         <h2 class="display h2">Training <span class="o">Designed</span><br>Around You</h2>
@@ -474,7 +464,7 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
       <a href="#pricing" class="btn"><i class="ib"></i><span>More Program</span><svg><use href="#arr"/></svg></a>
     </div>
 
-    <div class="prog" data-reveal>
+    <div class="prog">
       <div class="photo"><img src="https://framerusercontent.com/images/l9KmmTiAajhR7OXZqhQMSlWa6C8.png" alt=""></div>
       <div class="prog-card">
         <span class="n">01.</span>
@@ -485,7 +475,7 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
         <div class="tags"><span>Ages 5–10</span><span>Beginner Level</span><span>2–3 sessions / week</span></div>
       </div>
     </div>
-    <div class="prog" data-reveal>
+    <div class="prog">
       <div class="photo"><img src="https://framerusercontent.com/images/JYwD4YxEqcCHwZzxJbdwOS5QZ4.png" alt=""></div>
       <div class="prog-card">
         <span class="n">02.</span>
@@ -496,7 +486,7 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
         <div class="tags"><span>Ages 10–14</span><span>Beginner to Inter</span><span>3–4 sessions / week</span></div>
       </div>
     </div>
-    <div class="prog" data-reveal>
+    <div class="prog">
       <div class="photo"><img src="https://framerusercontent.com/images/XANyoad8DjwaAoLliFS8J1g4w.png" alt=""></div>
       <div class="prog-card">
         <span class="n">03.</span>
@@ -513,23 +503,28 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 <!-- WHY CHOOSE US -->
 <section class="why">
   <div class="container">
-    <div class="center" data-reveal>
+    <div class="center" data-a="up">
       <span class="badge"><i></i>Why choose us</span>
       <h2 class="display h2">The Right <span class="o">Coaching</span><br>Makes the Difference</h2>
     </div>
-    <div class="why-grid" data-reveal>
+    <div class="why-grid" data-a="up">
       <div class="why-left">
-        <div class="coach-count">
-          <strong>20+ Professional coach</strong>
-          <div class="avatars">
-            <img src="https://framerusercontent.com/images/fCK33OBogfjSu2ORexz9kSrR5Tw.png" alt="">
-            <img src="https://framerusercontent.com/images/0TdCkcPrCooLoZg8kjT57GbvE.png" alt="">
-            <img src="https://framerusercontent.com/images/oQGWrGjOZoYFBVknPfVefBKff0.png" alt="">
-          </div>
-        </div>
         <div class="tiles">
-          <div class="tile g"><i class="ring"></i><h4>Expert Coaching</h4></div>
-          <div class="tile lm"><i class="ring"></i><h4>Positive Community</h4></div>
+          <div class="tile g">
+            <img class="deco" src="https://framerusercontent.com/images/xOcwNdBxDwQ55XSDskqGoHtSWc.png" alt="">
+            <div class="avatars">
+              <img src="https://framerusercontent.com/images/fCK33OBogfjSu2ORexz9kSrR5Tw.png" alt="">
+              <img src="https://framerusercontent.com/images/0TdCkcPrCooLoZg8kjT57GbvE.png" alt="">
+              <img src="https://framerusercontent.com/images/oQGWrGjOZoYFBVknPfVefBKff0.png" alt="">
+            </div>
+            <small>20+ Professional coach</small>
+            <h4>Expert Coaching</h4>
+          </div>
+          <div class="tile lm">
+            <img class="deco" src="https://framerusercontent.com/images/taYy9mjaFJHX7A21EIqrZFs0b3I.png" alt="">
+            <img class="icon" src="https://framerusercontent.com/images/Q5tMQtMY39YyaY4DKqStUVI.png" alt="">
+            <h4>Positive Community</h4>
+          </div>
         </div>
         <div class="img-tile">
           <img src="https://framerusercontent.com/images/zIsh57KTNVPDuAP86toggXObwMU.png" alt="">
@@ -538,9 +533,9 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
         </div>
       </div>
       <div class="slider" id="slider">
-        <img class="on" src="https://framerusercontent.com/images/9vEzbcvg8VWq1kBsP8yiIxbc1M.png" alt="">
-        <img src="https://framerusercontent.com/images/wc55muDRLFBOTbnAG4k7qPoigg.png" alt="">
-        <img src="https://framerusercontent.com/images/XANyoad8DjwaAoLliFS8J1g4w.png" alt="">
+        <img class="on" src="https://framerusercontent.com/images/s4zcnXc3JUsPpr8koU7fv5f3ig.png" alt="">
+        <img src="https://framerusercontent.com/images/9vEzbcvg8VWq1kBsP8yiIxbc1M.png" alt="">
+        <img src="https://framerusercontent.com/images/QKigMEfVN15b5l1SS15Y0Xz96F4.jpg" alt="">
         <div class="dots"></div>
       </div>
     </div>
@@ -550,41 +545,32 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 
 <!-- PATHWAY -->
 <section class="path">
-  <div class="container">
-    <div data-reveal>
-      <span class="badge"><i></i>Development Pathway</span>
-      <h2 class="display h2" style="margin-top:16px">Every <span class="o">Champion</span><br>Starts Somewhere</h2>
-    </div>
-    <div class="path-cards flip-wrap">
-      <div class="pcard pc1" data-flip><span class="num">01.</span><div><h4>Foundation</h4><p>Master the fundamentals, coordination, and love of the game.</p></div></div>
-      <div class="pcard pc2" data-flip><span class="num">02.</span><div><h4>Development</h4><p>Build consistency, improve movement, and develop tactical awareness.</p></div></div>
-      <div class="pcard pc3" data-flip><span class="num">03.</span><div><h4>Performance</h4><p>Strengthen match play, fitness, and competitive confidence.</p></div></div>
-      <div class="pcard pc4" data-flip><span class="num">04.</span><div><h4>Elite Training</h4><p>Refine advanced skills &amp; prepare for higher-level competition.</p></div></div>
+  <div class="container" data-a="up">
+    <span class="badge nc"><i></i>Development Pathway</span>
+    <h2 class="display h2" style="margin-top:16px">Every <span class="o">Champion</span><br>Starts Somewhere</h2>
+    <div class="path-cards" data-a="up">
+      <div class="pcard pc1" data-a="flip1"><span class="num">01.</span><div><h4>Foundation</h4><p>Master the fundamentals, coordination, and love of the game.</p></div></div>
+      <div class="pcard pc2" data-a="flip2"><span class="num">02.</span><div><h4>Development</h4><p>Build consistency, improve movement, and develop tactical awareness.</p></div></div>
+      <div class="pcard pc3" data-a="flip3"><span class="num">03.</span><div><h4>Performance</h4><p>Strengthen match play, fitness, and competitive confidence.</p></div></div>
+      <div class="pcard pc4" data-a="flip4"><span class="num">04.</span><div><h4>Elite Training</h4><p>Refine advanced skills &amp; prepare for higher-level competition.</p></div></div>
     </div>
   </div>
 </section>
 
 <!-- COACHES -->
 <section class="coaches">
-  <div class="container">
-    <div class="center" data-reveal>
+  <div class="container" data-a="up">
+    <div class="center">
       <span class="badge"><i></i>Meet our coaches</span>
       <h2 class="display h2">Learn from <span class="o">Coaches</span><br>Who Truly Care</h2>
     </div>
-    <div class="coach-grid" data-fade>
-      <div class="coach"><img src="https://framerusercontent.com/images/nSNE6N5ZrYEW2weUsnftPse7E.png" alt=""><div class="tag"><b>Alex Morgan</b><small>Head coach</small></div></div>
-      <div class="coach"><img src="https://framerusercontent.com/images/rYLzhw86eC9cymZW6FzsGJZjM.png" alt=""><div class="tag"><b>Marco Reyes</b><small>Performance</small></div></div>
-      <div class="coach"><img src="https://framerusercontent.com/images/6sNFKl7rBt34XAdXDfMGctMjskM.png" alt=""><div class="tag"><b>Owen Hartley</b><small>Juniors</small></div></div>
-      <div class="coach"><img src="https://framerusercontent.com/images/nXy54qpDdHIv1dY6ELIkCkrQZw.png" alt=""><div class="tag"><b>Leo Varga</b><small>Fitness</small></div></div>
-      <div class="coach"><img src="https://framerusercontent.com/images/QAF2CF81kcTAzXTlMCpHtnZ0uk.png" alt=""><div class="tag"><b>Peter Lund</b><small>Tactics</small></div></div>
-      <div class="coach"><img src="https://framerusercontent.com/images/hqsbbZAdVAzQaLdIpljK70WSQ.png" alt=""><div class="tag"><b>Sam Okafor</b><small>Adults</small></div></div>
-    </div>
+    <div class="coach-grid" data-a="fade" id="coachGrid"></div>
   </div>
 </section>
 
 <!-- REVIEWS -->
 <section class="reviews">
-  <div class="container" data-reveal>
+  <div class="container" data-a="up">
     <div class="head-row">
       <div>
         <span class="badge dark orange"><i></i>Reviews</span>
@@ -609,18 +595,15 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 
 <!-- VIDEO -->
 <section class="video">
-  <div class="container" data-reveal>
-    <div class="vwrap" id="vwrap">
-      <video id="vid" src="https://framerusercontent.com/assets/9yvI14xejfTdUfaTiUnpASmYNw.mp4" autoplay muted loop playsinline></video>
-      <button class="vbtn" id="vbtn" aria-label="Pause video"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><rect x="3" y="2" width="3.5" height="12" rx="1"/><rect x="9.5" y="2" width="3.5" height="12" rx="1"/></svg></button>
-    </div>
+  <div class="container" data-a="up">
+    <div class="vwrap"><video src="https://framerusercontent.com/assets/9yvI14xejfTdUfaTiUnpASmYNw.mp4" autoplay muted loop playsinline></video></div>
   </div>
 </section>
 
 <!-- CONTACT -->
 <section class="contact" id="contact">
-  <div class="container contact-grid">
-    <div data-reveal>
+  <div class="container contact-grid" data-a="up">
+    <div>
       <span class="badge"><i></i>Contact</span>
       <h2 class="display h2">Find Your <span class="o">Perfect</span><br>Program</h2>
       <p class="intro">Questions about programs, pricing or booking a trial session? Reach out to our team — we reply to every message within 24 hours.</p>
@@ -629,22 +612,22 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
         <div class="socials">
           <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".8" fill="currentColor"/></svg></a>
           <a href="#" aria-label="Facebook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 8h3V4h-3a4 4 0 0 0-4 4v3H7v4h3v6h4v-6h3l1-4h-4V8z"/></svg></a>
-          <a href="#" aria-label="X"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 4l16 16M20 4L4 20"/></svg></a>
-          <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9l5 3-5 3z" fill="currentColor"/></svg></a>
-          <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 3v11a4 4 0 1 1-4-4M14 3c0 3 2 5 5 5"/></svg></a>
+          <a href="#" aria-label="X"><svg><use href="#i-x"/></svg></a>
+          <a href="#" aria-label="YouTube"><svg><use href="#i-yt"/></svg></a>
+          <a href="#" aria-label="TikTok"><svg><use href="#i-tt"/></svg></a>
         </div>
       </div>
     </div>
-    <div data-reveal>
+    <div>
       <div class="form-shell">
-        <form id="form">
+        <form class="cform" id="form">
           <div><label>Name</label><input placeholder="Jane Smith" required></div>
           <div><label>Email</label><input type="email" placeholder="info@tennico.com" required></div>
           <div class="full"><label>Phone Number *</label><input type="tel" placeholder="+1 (310) 555-0147" required></div>
           <div class="full"><label>Player Age *</label><select><option>17</option><option selected>18</option><option>19</option><option>20</option></select></div>
           <div><label>Playing Level *</label><select><option>Beginner</option><option>Intermediate</option><option>Advanced</option><option>Professional</option><option>Elite</option></select></div>
           <div><label>Category *</label><select><option>Junior Tennis</option><option>Adult Tennis</option><option>Senior Tennis</option><option>Private Coaching</option></select></div>
-          <div class="full"><button class="btn" type="submit"><i class="ib"></i><span>Join Now</span><svg><use href="#arr"/></svg></button></div>
+          <div class="full"><button class="btn linear" type="submit"><i class="ib"></i><span>Join Now</span><svg><use href="#arr"/></svg></button></div>
           <p class="sent" id="sent">Thanks! We'll get back to you within 24 hours.</p>
         </form>
         <div class="support">
@@ -658,22 +641,22 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 
 <!-- COMPARE PLANS -->
 <section class="compare" id="pricing">
-  <div class="outline" aria-hidden="true"><span>Plans</span><span>Plans</span><span>Plans</span><span>Plans</span></div>
-  <div class="container" data-reveal style="position:relative">
+  <div class="outline" aria-hidden="true">Plans</div>
+  <div class="container" data-a="up" style="position:relative">
     <div class="head-row">
       <div>
-        <span class="badge dark orange"><i></i>Compare Plans</span>
+        <span class="badge dark orange nc"><i></i>Compare Plans</span>
         <h2 class="display h2">Compare <span class="l">Every Plan</span></h2>
       </div>
-      <span class="pill"><i></i>No contracts. Switch plans anytime.</span>
+      <span class="pill"><i class="spin"></i>No contracts. Switch plans anytime.</span>
     </div>
     <div class="table-scroll">
       <div class="ptable">
         <div class="prow phead">
           <div class="pf"><h3>Plan Features</h3><p>See what’s included at every level.</p></div>
-          <div class="plan a"><h5>Foundation</h5><div class="pr">$89 <small>/ month</small></div></div>
-          <div class="plan b"><span class="mp"><i></i>Most popular</span><h5>Performance</h5><div class="pr">$149 <small>/ month</small></div></div>
-          <div class="plan c"><h5>Elite Training</h5><div class="pr">$249 <small>/ month</small></div></div>
+          <div class="plan a" data-a="headL" data-th=".3"><h5>Foundation</h5><div class="pr">$89 <small>/ month</small></div></div>
+          <div class="plan b" data-a="headM" data-th=".3"><span class="mp"><i></i>Most popular</span><h5>Performance</h5><div class="pr">$149 <small>/ month</small></div></div>
+          <div class="plan c" data-a="headR" data-th=".3"><h5>Elite Training</h5><div class="pr">$249 <small>/ month</small></div></div>
         </div>
         <div class="pbody" id="pbody"></div>
         <div class="prow pfoot">
@@ -689,14 +672,14 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 
 <!-- FAQ -->
 <section class="faq">
-  <div class="container">
-    <div class="center" data-reveal>
-      <span class="badge"><i></i>Faq’s</span>
+  <div class="container" data-a="up">
+    <div class="center">
+      <span class="badge nc"><i></i>Faq’s</span>
       <h2 class="display h2">Everything <span class="o">You</span><br><span class="o">Need</span> to Know</h2>
     </div>
-    <div class="faq-grid" data-reveal>
-      <div class="photo"><img src="https://framerusercontent.com/images/2j0VmkXKtY1ymgWts55co18dXms.png" alt="Basket of tennis balls"></div>
-      <div class="acc" id="acc"></div>
+    <div class="faq-grid">
+      <div class="photo" data-a="fromL"><img src="https://framerusercontent.com/images/2j0VmkXKtY1ymgWts55co18dXms.png" alt="Basket of tennis balls"></div>
+      <div class="acc" id="acc" data-a="fromR"></div>
     </div>
   </div>
 </section>
@@ -704,10 +687,10 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 <!-- FOOTER -->
 <footer>
   <div class="cta">
-    <img class="cta-ball" id="ctaBall" src="https://framerusercontent.com/images/VVKIiWoEQgyDjx5WvPjWpq3A.png" alt="">
-    <div class="float f1" data-speed="-0.12"><img src="https://framerusercontent.com/images/NUlBiaEQWFDbuHrpeyh44dbr5Q.png" alt=""></div>
-    <div class="float f2" data-speed="0.1"><img src="https://framerusercontent.com/images/aQaCmg0U2ASfsi22l4DjOVXCVUw.png" alt=""></div>
-    <div class="container" data-reveal style="position:relative">
+    <img class="cta-ball" src="https://framerusercontent.com/images/VVKIiWoEQgyDjx5WvPjWpq3A.png" alt="">
+    <div class="float f1" data-a="up25" data-th=".5"><img src="https://framerusercontent.com/images/NUlBiaEQWFDbuHrpeyh44dbr5Q.png" alt=""></div>
+    <div class="float f2" data-a="up25" data-th=".5"><img src="https://framerusercontent.com/images/aQaCmg0U2ASfsi22l4DjOVXCVUw.png" alt=""></div>
+    <div class="container" data-a="up" style="position:relative">
       <span class="badge dark orange"><i></i>Call to action</span>
       <h2 class="display h2">Ready to Take <span class="o">Your Game</span><br>to the Next Level?</h2>
       <a href="#contact" class="btn lime"><i class="ib"></i><span>Book a Trial Session</span><svg><use href="#arr"/></svg></a>
@@ -715,11 +698,11 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
     <div class="ticker"><div class="track" id="track"></div></div>
   </div>
   <div class="container">
-    <div class="fbox" data-reveal>
+    <div class="fbox" data-a="upSpring">
       <div class="fgrid">
         <div>
           <h3>Get tennis <span class="o">tips</span><br>academy updates</h3>
-          <form class="sub" id="subForm" onsubmit="event.preventDefault();this.querySelector('span').textContent='Subscribed';">
+          <form class="sub" id="subForm">
             <input type="email" placeholder="Enter your mail" required>
             <button class="btn" type="submit"><i class="ib"></i><span>Subscribe</span><svg><use href="#arr"/></svg></button>
           </form>
@@ -737,63 +720,54 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
   const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
 
-  /* hero intro */
-  const heroImg = $('#heroBg img');
-  const go = () => requestAnimationFrame(() => document.body.classList.add('loaded'));
-  heroImg.complete ? go() : (heroImg.onload = go, setTimeout(go, 1500));
-
-  /* rolling digit counters */
-  $$('.roll').forEach(el => {
-    const to = el.dataset.to;
-    el.innerHTML = '';
-    el.style.display = 'inline-flex';
-    [...to].forEach(d => {
-      const col = document.createElement('span');
-      col.className = 'roll';
-      const strip = document.createElement('span');
-      strip.dataset.d = d;
-      strip.innerHTML = Array.from({length: 10}, (_, i) => `<b>${i}</b>`).join('');
-      col.appendChild(strip);
-      el.appendChild(col);
-    });
-  });
-
-  /* in-view reveals */
-  const io = new IntersectionObserver(entries => {
-    entries.forEach(e => {
-      if (!e.isIntersecting) return;
-      const t = e.target;
-      t.classList.add('in');
-      $$('.roll > span > span', t).forEach((s, i) => {
-        s.style.transitionDelay = (i * 0.12) + 's';
-        s.style.transform = `translateY(-${s.dataset.d}em)`;
-      });
-      io.unobserve(t);
-    });
-  }, {threshold: 0.15, rootMargin: '0px 0px -60px 0px'});
-  $$('[data-reveal],[data-fade]').forEach(el => io.observe(el));
-  $$('[data-flip]').forEach((el, i) => { el.style.transitionDelay = (i * 0.12) + 's'; io.observe(el); });
-
-  /* nav state + mobile menu */
-  const nav = $('#nav');
-  $('#burger').onclick = () => nav.classList.toggle('open');
-  $$('.mmenu a').forEach(a => a.onclick = () => nav.classList.remove('open'));
-
-  /* slideshow */
-  const slides = $$('#slider img'), dots = $('#slider .dots');
-  let cur = 0, timer;
-  slides.forEach((_, i) => { const b = document.createElement('button'); b.setAttribute('aria-label', 'Slide ' + (i + 1)); b.onclick = () => show(i); dots.appendChild(b); });
-  const show = i => {
-    slides[cur].classList.remove('on'); dots.children[cur].classList.remove('on');
-    cur = i;
-    slides[cur].classList.add('on');
-    const d = dots.children[cur]; d.classList.remove('on'); void d.offsetWidth; d.classList.add('on');
-    clearTimeout(timer); timer = setTimeout(() => show((cur + 1) % slides.length), 4500);
+  /* ---------- exact spring curves (Framer/motion springs → CSS linear()) ---------- */
+  const spring = ({ k, c, bounce, duration }) => {
+    let w0, zeta;
+    if (k) { w0 = Math.sqrt(k); zeta = c / (2 * w0); }
+    else { zeta = 1 - bounce; w0 = 4.6 / (zeta * duration); }
+    const dt = 1 / 600; let x = 0, v = 0, t = 0; const pts = [];
+    while (t < 6) {
+      const a = -2 * zeta * w0 * v - w0 * w0 * (x - 1);
+      v += a * dt; x += v * dt; t += dt;
+      pts.push([t, x]);
+      if (t > 0.05 && Math.abs(1 - x) < 0.001 && Math.abs(v) < 0.01) break;
+    }
+    const T = duration && !k ? Math.max(duration, t) : t;
+    const n = 48, out = [];
+    for (let i = 0; i <= n; i++) {
+      const tt = (i / n) * t; const p = pts[Math.min(pts.length - 1, Math.round(tt / dt))];
+      out.push(+(i === n ? 1 : p[1]).toFixed(4));
+    }
+    return { ease: `linear(${out.join(',')})`, dur: (duration && !k ? duration : +T.toFixed(2)) + 's' };
   };
-  show(0);
+  if (CSS.supports('transition-timing-function', 'linear(0, 1)')) {
+    const root = document.documentElement.style;
+    const set = (name, s) => { root.setProperty(`--${name}`, s.ease); root.setProperty(`--${name}-d`, s.dur); };
+    set('sp-btn', spring({ bounce: .2, duration: .4 }));
+    set('sp-head', spring({ bounce: .25, duration: .7 }));
+    set('sp-stiff', spring({ k: 320, c: 50 }));
+    set('sp-2', spring({ bounce: .2, duration: 2 }));
+    set('sp-3', spring({ bounce: .2, duration: 3 }));
+  }
 
-  /* pricing table */
+  /* ---------- hero background appear (opacity 0, scale 1.1 → 1, 1s) ---------- */
+  const heroBg = $('#heroBg'), heroImg = $('img', heroBg);
+  const showHero = () => requestAnimationFrame(() => requestAnimationFrame(() => heroBg.classList.add('in')));
+  heroImg.complete ? showHero() : (heroImg.onload = showHero, setTimeout(showHero, 1500));
+
+  /* ---------- coaches grid ---------- */
+  const coaches = [
+    ['nSNE6N5ZrYEW2weUsnftPse7E', 'Alex Morgan'], ['rYLzhw86eC9cymZW6FzsGJZjM', 'Marco Reyes'], ['6sNFKl7rBt34XAdXDfMGctMjskM', 'Owen Hartley'],
+    ['nXy54qpDdHIv1dY6ELIkCkrQZw', 'Leo Varga'], ['QAF2CF81kcTAzXTlMCpHtnZ0uk', 'Peter Lund'], ['hqsbbZAdVAzQaLdIpljK70WSQ', 'Sam Okafor']
+  ];
+  $('#coachGrid').innerHTML = coaches.map(([id, name]) => `
+    <div class="coach"><img src="https://framerusercontent.com/images/${id}.png" alt="${name}">
+      <div class="identity"><b>${name}</b><span class="soc"><svg><use href="#i-x"/></svg><svg><use href="#i-tt"/></svg><svg><use href="#i-yt"/></svg></span></div>
+    </div>`).join('');
+
+  /* ---------- pricing table (rows slide in from x:-20, staggered .05s) ---------- */
   const C = '<i class="ck"></i>', D = '<i class="dash"></i>';
   const rows = [
     ['Sessions per week', '3', '4', '5'],
@@ -808,9 +782,51 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
     ['Priority booking', D, C, C],
     ['Advanced tactical development', D, D, C]
   ];
-  $('#pbody').innerHTML = rows.map(r => `<div class="prow">${r.map(c => `<div>${c}</div>`).join('')}</div>`).join('');
+  $('#pbody').innerHTML = rows.map((r, i) =>
+    `<div class="prow" data-a="row" data-th=".2" style="transition-delay:${(i * .05).toFixed(2)}s">${r.map(c => `<div>${c}</div>`).join('')}</div>`).join('');
 
-  /* FAQ accordion */
+  /* ---------- appear-on-scroll (animate once) ---------- */
+  const observers = {};
+  const watch = el => {
+    const th = parseFloat(el.dataset.th || 0);
+    if (!observers[th]) observers[th] = new IntersectionObserver(es => es.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('in'); observers[th].unobserve(e.target); }
+    }), { threshold: th });
+    observers[th].observe(el);
+  };
+  $$('[data-a]').forEach(watch);
+
+  /* ---------- counters: count up, 1.6s ease-out-cubic, starts at 50% visible ---------- */
+  const cio = new IntersectionObserver(es => es.forEach(e => {
+    if (!e.isIntersecting) return;
+    cio.unobserve(e.target);
+    const el = e.target, to = +el.dataset.to, t0 = performance.now(), dur = 1600;
+    const tick = now => {
+      const p = Math.min(1, (now - t0) / dur), s = 1 - (1 - p) ** 3;
+      el.textContent = Math.round(to * s).toLocaleString('en-US');
+      if (p < 1) requestAnimationFrame(tick);
+    };
+    requestAnimationFrame(tick);
+  }), { threshold: .5 });
+  $$('.count').forEach(el => cio.observe(el));
+
+  /* ---------- mobile menu ---------- */
+  const nav = $('#nav');
+  $('#burger').onclick = () => nav.classList.toggle('open');
+  $$('.mmenu a').forEach(a => a.addEventListener('click', () => nav.classList.remove('open')));
+
+  /* ---------- slideshow: instant swap every 2s, dot colour animates ---------- */
+  const slides = $$('#slider img'), dots = $('#slider .dots');
+  let cur = 0, timer;
+  slides.forEach((_, i) => { const b = document.createElement('button'); b.setAttribute('aria-label', 'Slide ' + (i + 1)); b.onclick = () => show(i); dots.appendChild(b); });
+  const show = i => {
+    slides[cur].classList.remove('on'); dots.children[cur].classList.remove('on');
+    cur = i; slides[cur].classList.add('on'); dots.children[cur].classList.add('on');
+    clearTimeout(timer); timer = setTimeout(() => show((cur + 1) % slides.length), 2000);
+  };
+  show(0);
+
+  /* ---------- FAQ: exactly one item open, .5s height change ---------- */
   const faqs = [
     ['Who can join the Elite Training Plan?', 'Our Elite Training Plan is designed for advanced and competitive players who want to elevate their performance.'],
     ['Do I need previous tennis experience?', 'Not at all. Our Foundation program starts from zero and coaches group players by level, so everyone feels comfortable from day one.'],
@@ -822,51 +838,62 @@ footer{background:var(--dark);position:relative;overflow:hidden;margin-top:75px}
   acc.innerHTML = faqs.map(([q, a], i) => `
     <div class="item${i === 0 ? ' open' : ''}">
       <button class="q" aria-expanded="${i === 0}"><span>${q}</span><i></i></button>
-      <div class="a"><div><div class="inner"><p>${a}</p><a href="#contact" class="btn sm"><i class="ib"></i><span>Get in touch</span><svg><use href="#arr"/></svg></a></div></div></div>
+      <div class="a"><div><div class="inner"><p>${a}</p><a href="#contact" class="btn sm dark"><i class="ib"></i><span>Get in touch</span><svg><use href="#arr"/></svg></a></div></div></div>
     </div>`).join('');
-  $$('.item', acc).forEach(item => $('.q', item).onclick = () => {
-    const was = item.classList.contains('open');
+  $$('.item', acc).forEach(item => $('.q', item).addEventListener('click', () => {
+    if (item.classList.contains('open')) return;
     $$('.item', acc).forEach(o => { o.classList.remove('open'); $('.q', o).setAttribute('aria-expanded', 'false'); });
-    if (!was) { item.classList.add('open'); $('.q', item).setAttribute('aria-expanded', 'true'); }
-  });
+    item.classList.add('open'); $('.q', item).setAttribute('aria-expanded', 'true');
+  }));
 
-  /* ticker */
+  /* ---------- ticker: constant 60px/s to the left, never pauses ---------- */
   const imgs = ['3R59JfurWFPIeUViu60HAADunfk', 'go3XZ6tkz9LfyFDrxXoF2x7b4', 'ex6OX8fat0IC9MSs2RKLBQE4', 'KBojtd7K5xDgFrqA3rWsMyfhlc', 'nV0cn3Al5DDZeKKsihCvzPYM', 'tVs1K74neA2pMcZA4nVB5Qgg'];
+  const track = $('#track');
   const set = imgs.map(id => `<img src="https://framerusercontent.com/images/${id}.png" alt="" loading="lazy">`).join('');
-  $('#track').innerHTML = set + set + set + set;
-
-  /* video toggle */
-  const vid = $('#vid'), vbtn = $('#vbtn');
-  const PAUSE = vbtn.innerHTML, PLAY = '<svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M4 2.5v11l9-5.5z"/></svg>';
-  vbtn.onclick = () => { if (vid.paused) { vid.play(); vbtn.innerHTML = PAUSE; } else { vid.pause(); vbtn.innerHTML = PLAY; } };
-
-  /* contact form */
-  $('#form').onsubmit = e => { e.preventDefault(); $('#sent').style.display = 'block'; e.target.querySelector('.btn span').textContent = 'Sent'; };
-
-  /* scroll-driven effects */
-  const heroBg = $('#heroBg'), vwrap = $('#vwrap'), ball = $('#ctaBall'), floats = $$('.float');
-  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let ticking = false;
-  const onScroll = () => {
-    const y = scrollY, vh = innerHeight;
-    nav.classList.toggle('scrolled', y > 60);
-    if (!reduce) {
-      if (y < vh * 1.2 && document.body.classList.contains('loaded')) heroBg.style.transform = `translateY(${y * 0.3}px)`;
-      const vr = vwrap.getBoundingClientRect();
-      const p = Math.min(1, Math.max(0, (vh - vr.top) / (vh * 0.9)));
-      vwrap.style.transform = `scale(${0.86 + 0.14 * p})`;
-      const br = ball.parentElement.getBoundingClientRect();
-      const bp = (vh - br.top) / (vh + br.height);
-      ball.style.transform = `translateX(-50%) rotate(${bp * 60}deg)`;
-      floats.forEach(f => f.style.transform = `translateY(${(br.top - vh / 2) * parseFloat(f.dataset.speed)}px) rotate(${bp * 20 * Math.sign(parseFloat(f.dataset.speed))}deg)`);
+  track.innerHTML = set + set + set + set;
+  let tx = 0, last = 0, half = 0;
+  const run = now => {
+    if (last) {
+      half = half || track.scrollWidth / 2;
+      tx -= 60 * Math.min(.1, (now - last) / 1000);
+      if (half && -tx >= half) tx += half;
+      track.style.transform = `translateX(${tx}px)`;
     }
-    ticking = false;
+    last = now; requestAnimationFrame(run);
   };
-  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, {passive: true});
-  addEventListener('resize', onScroll);
-  // hero bg uses CSS transition for the intro; switch to instant transforms once it has played
-  setTimeout(() => { heroBg.style.transition = 'opacity 1.4s var(--ease)'; onScroll(); }, 1900);
-  onScroll();
+  requestAnimationFrame(run);
+  addEventListener('resize', () => { half = 0; });
+
+  /* ---------- forms ---------- */
+  $('#form').addEventListener('submit', e => { e.preventDefault(); $('#sent').style.display = 'block'; $('.btn span', e.target).textContent = 'Sent'; });
+  $('#subForm').addEventListener('submit', e => { e.preventDefault(); $('.btn span', e.target).textContent = 'Subscribed'; });
+
+  /* ---------- smooth scroll (Framer "Smooth Scroll", intensity 20) ---------- */
+  const b = 0.22 - (0.2 / 0.5) * 0.12;              // same formula as the original component
+  let target = scrollY, pos = scrollY, raf = 0, lt = 0;
+  const maxY = () => document.documentElement.scrollHeight - innerHeight;
+  const step = now => {
+    const dt = lt ? Math.max(0, (now - lt) / 1000) : 1 / 60; lt = now;
+    pos += (target - pos) * (1 - Math.exp(-b * 60 * dt));
+    if (Math.abs(target - pos) < .35) pos = target;
+    scrollTo({ top: pos, behavior: 'instant' });
+    if (pos !== target) raf = requestAnimationFrame(step); else { raf = 0; lt = 0; }
+  };
+  const go = y => { if (!raf) { pos = scrollY; } target = Math.max(0, Math.min(maxY(), y)); if (!raf) raf = requestAnimationFrame(step); };
+  addEventListener('wheel', e => {
+    if (reduce.matches || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+    if (e.target.closest && e.target.closest('select')) return;
+    e.preventDefault();
+    const d = e.deltaMode === 1 ? e.deltaY * 40 : e.deltaMode === 2 ? e.deltaY * innerHeight : e.deltaY;
+    go((raf ? target : scrollY) + d);
+  }, { passive: false });
+  addEventListener('scroll', () => { if (!raf) target = pos = scrollY; }, { passive: true });
+  $$('a[href^="#"]').forEach(a => a.addEventListener('click', e => {
+    const id = a.getAttribute('href'); const el = id === '#top' ? document.body : $(id);
+    if (!el) return; e.preventDefault();
+    const y = id === '#top' ? 0 : el.getBoundingClientRect().top + scrollY;
+    reduce.matches ? scrollTo(0, y) : go(y);
+  }));
 })();
 </script>
 </body>
